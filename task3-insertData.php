@@ -47,14 +47,6 @@ function fillBase($dbh)
 SQL;
         mysqli_query($dbh, $addUser);
 
-        // insert групп каждому юзеру
-        foreach($groups as $group) {
-            $addGroup = <<<SQL
-            INSERT INTO groups(user_id, name) VALUES ($i, '$group');
-SQL;
-            mysqli_query($dbh, $addGroup);
-        }
-
         // insert контактов каждому юзеру
         for($y = 1; $y <= $userContacts; $y++ ) {
             $contName = randName($names);
@@ -67,11 +59,20 @@ SQL;
 
             mysqli_query($dbh, $addCont);
 
+            // insert контактов с группами
             $addGroupCont = <<<SQL
               INSERT INTO contacts_groups(contact_id, group_id) VALUES ($y, $groupId);
 SQL;
 
             mysqli_query($dbh, $addGroupCont);
+        }
+
+//         insert групп каждому юзеру
+        foreach($groups as $group) {
+            $addGroup = <<<SQL
+            INSERT INTO groups(user_id, name) VALUES ($i, '$group');
+SQL;
+            mysqli_query($dbh, $addGroup);
         }
     }
 
