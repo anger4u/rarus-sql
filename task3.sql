@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS contacts_channels_tokens;
 DROP TABLE IF EXISTS contacts_channels;
 DROP TABLE IF EXISTS channels;
 DROP TABLE IF EXISTS contacts_groups;
+DROP TABLE IF EXISTS users_groups;
 DROP TABLE IF EXISTS groups;
 DROP TABLE IF EXISTS contacts;
 DROP TABLE IF EXISTS users;
@@ -27,16 +28,20 @@ CREATE TABLE IF NOT EXISTS contacts (
 
 CREATE TABLE IF NOT EXISTS groups (
     id int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-    user_id int(11) UNSIGNED NOT NULL,
     name varchar(128) null,
-    PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS users_groups (
+    user_id int(11) UNSIGNED NOT NULL,
+    group_id int(11) UNSIGNED NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS contacts_groups (
     contact_id int(11) UNSIGNED NOT NULL,
     group_id int(11) UNSIGNED NOT NULL,
-    PRIMARY KEY (contact_id, group_id),
     FOREIGN KEY (contact_id) REFERENCES contacts(id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -105,8 +110,7 @@ FROM contacts
     ON contacts.id = contacts_groups.contact_id
   INNER JOIN groups
     ON contacts_groups.group_id = groups.id
-WHERE contacts.user_id = 3
-  AND groups.name = 'Часто используемые';
+WHERE user_id = 3 AND groups.name = 'Часто используемые';
 
 -- Поиск контактов по ФИО/номеру
 SELECT name FROM contacts WHERE name LIKE 'Саша%';

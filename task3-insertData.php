@@ -38,6 +38,7 @@ function fillBase($dbh)
     $userCount = 10;
     $userContacts = 10;
 
+
     // insert юзеров в базу
     for ($i = 1; $i <= $userCount; $i++) {
         $userName = randName($names);
@@ -47,42 +48,50 @@ function fillBase($dbh)
 SQL;
         mysqli_query($dbh, $addUser);
 
-        // insert контактов каждому юзеру
-        for($y = 1; $y <= $userContacts; $y++ ) {
-            $contName = randName($names);
-            $contPhone = randPhone();
-            $contMail = randLogin($logins) . '-mail@google.com';
-            $groupId = random_int(1, count($groups));
-            $addCont = <<<SQL
-              INSERT INTO contacts(user_id, name, phone, email) VALUES ($y, '$contName', '$contPhone', '$contMail');
+            // insert контактов каждому юзеру
+            for($y = 0; $y < $userContacts; $y++ ) {
+                $contName = randName($names);
+                $contPhone = randPhone();
+                $contMail = randLogin($logins) . '-mail@google.com';
+                $addCont = <<<SQL
+                  INSERT INTO contacts(user_id, name, phone, email) VALUES ($i, '$contName', '$contPhone', '$contMail');
 SQL;
+                mysqli_query($dbh, $addCont);
 
-            mysqli_query($dbh, $addCont);
-
-            // insert контактов с группами
-            $addGroupCont = <<<SQL
-              INSERT INTO contacts_groups(contact_id, group_id) VALUES ($y, $groupId);
+            // insert групп каждому юзеру
+            for($z = 1; $z <= 5; $z++) {
+                $addGroup = <<<SQL
+                INSERT INTO users_groups(user_id, group_id) VALUES ($i, $z);
 SQL;
-
-            mysqli_query($dbh, $addGroupCont);
+                mysqli_query($dbh, $addGroup);
+            }
         }
 
-//         insert групп каждому юзеру
+        // insert групп в базу
         foreach($groups as $group) {
             $addGroup = <<<SQL
-            INSERT INTO groups(user_id, name) VALUES ($i, '$group');
+          INSERT INTO groups(name) VALUES ('$group');
 SQL;
             mysqli_query($dbh, $addGroup);
         }
-    }
 
-    foreach($channels as $channel) {
-        $addChannel = <<<SQL
-      INSERT INTO channels(name) VALUES ('$channel');
+        // insert каналов в базу
+        foreach($channels as $channel) {
+            $addChannel = <<<SQL
+          INSERT INTO channels(name) VALUES ('$channel');
 SQL;
-        mysqli_query($dbh, $addChannel);
+            mysqli_query($dbh, $addChannel);
+        }
     }
 
+    // insert контактов с группами
+    for($h = 1; $h <= ($userCount * $userContacts); $h++) {
+        $groupInd = mt_rand(1, count($groups));
+        $addGroupCont = <<<SQL
+          INSERT INTO contacts_groups(contact_id, group_id) VALUES ($h, $groupInd);
+SQL;
+        mysqli_query($dbh, $addGroupCont);
+    }
 }
 
 fillBase($dbh);
