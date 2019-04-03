@@ -76,23 +76,27 @@ INSERT INTO contacts(login, name, phone, email)
 VALUES ('holly', 'Саша Покалов', '89781188838', 'bill@mail.com');
 
 DELETE FROM contacts
-WHERE id = '3';
+WHERE id = '3' 
+LIMIT 1;
 
 UPDATE contacts
 SET phone = '89781188838'
-WHERE id = '3';
+WHERE id = '3' 
+LIMIT 1;
 
 -- Добавление/удаление/изменение контакта в группу.
 INSERT INTO contacts_groups(contact_id, group_id)
 VALUES (33, 3);
 
 DELETE FROM contacts_groups
-WHERE contact_id = 111;
+WHERE contact_id = 111
+LIMIT 1;
 
 UPDATE contacts_groups
 SET contact_id = 22
 WHERE group_id = 2
-AND contact_id = 3;
+AND contact_id = 3
+LIMIT 1;
 
 -- Вывод групп с подсчетом количества контактов.
 SELECT groups.name, COUNT(contacts_groups.contact_id) AS number
@@ -110,11 +114,12 @@ FROM contacts
     ON contacts.id = contacts_groups.contact_id
   INNER JOIN groups
     ON contacts_groups.group_id = groups.id
-WHERE user_id = 3 AND groups.name = 'Часто используемые';
+WHERE user_id = 3 AND groups.name = 'Часто используемые'
+GROUP BY contacts.name;
 
 -- Поиск контактов по ФИО/номеру
-SELECT name FROM contacts WHERE name LIKE 'Саша%';
-SELECT name FROM contacts WHERE phone = '89781168838';
+SELECT name FROM contacts WHERE name LIKE 'Саша%' GROUP BY name;
+SELECT name FROM contacts WHERE phone = '89781168838' GROUP BY name;
 
 -- Выборка контактов по группе
 SELECT *
