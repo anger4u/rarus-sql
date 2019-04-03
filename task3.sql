@@ -71,11 +71,11 @@ INSERT INTO contacts(login, name, phone, email)
 VALUES ('holly', 'Саша Покалов', '89781188838', 'bill@mail.com');
 
 DELETE FROM contacts
-WHERE login = 'holly';
+WHERE id = '3';
 
 UPDATE contacts
 SET phone = '89781188838'
-WHERE login = 'holly';
+WHERE id = '3';
 
 -- Добавление/удаление/изменение контакта в группу.
 INSERT INTO contacts_groups(contact_id, group_id)
